@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const compression = require('compression');
 // bar code reader stuffs
-const Quagga = require('quagga'); 
+// const Quagga = require('quagga'); 
 
 // middleware
 app.use(express.urlencoded({extended: false}));
