@@ -12,7 +12,8 @@ export default function App() {
     };
 
     return (
-        <div className="App">
+        <div className="app">
+            <h1>Plate Check</h1>
             <p>{result ? result : "Scanning..."}</p>
             <button onClick={() => setCamera(!camera)}>
                 {camera ? "Stop" : "Start"}
