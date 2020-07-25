@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const compression = require('compression');
+const { default: axios } = require('axios');
 // bar code reader stuffs
 // const Quagga = require('quagga'); 
 
@@ -22,9 +23,10 @@ if (process.env.NODE_ENV != 'production') {
 }
 
 // mongo stuff
-var MongoClient = require('mongodb').MongoClient;
-var url = "mongodb://localhost:27017/";
+const MongoClient = require('mongodb').MongoClient;
+const mongoUrl = "mongodb://localhost:27017/";
 
+/*  -- template test code
 MongoClient.connect(url, function(err, db) {
   if (err) throw err;
   var dbo = db.db("test");
@@ -37,7 +39,27 @@ MongoClient.connect(url, function(err, db) {
     console.log(result);
     db.close();
   });
-});
+});*/
+
+// Route(s)
+
+app.post("/getIngredientsInfo", (req, res)=>{
+    let productCode = req.body.codeToLookup;
+    MongoClient.connect(mongoUrl, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("test");
+        var query = { _id: productCode };
+        var result = dbo.collection("products").find(query).toArray(function(err, result) {
+        if (err) {
+            console.log("Db Error: ", err); 
+            throw err;
+        }
+        res.json(result);
+        console.log(result);
+        db.close();
+    });
+  });
+})
 
 
 

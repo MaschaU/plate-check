@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Scanner from "./scanner";
 import ReactDOM from "react-dom";
+import axios from "axios";
 
 
 export default function App() {
@@ -9,6 +10,9 @@ export default function App() {
 
     const onDetected = result => {
         setResult(result);
+        axios.post("/getIngredientsInfo", {codeToLookup:result}).then((result)=>{
+            console.log("This is the result:", result);
+        });
     };
 
     return (
