@@ -60,14 +60,22 @@ app.post("/getIngredientsInfo", (req, res)=>{
                 throw err;
             }
 
-            // TODO: check for result.length, must be >0
+            // If we don't have this product code in the database,
+            // we must abort trying to interpret it and return error
+            if (result.length < 1) {
+                res.json ({display: "unknown"});
+                db.close();
+                return;
+            }
 
             let ingredients = result[0].ingredients_tags;
             console.log("Pre-processing of ingredients:", ingredients);
             for (let i=0; i<ingredients.length; i++) {
                 if (!(ingredients[i].startsWith("en:") || ingredients[i].startsWith("de:")))  {
-                    // TODO: res.json ("don't know this shit"), then return
-                    console.log("It's a bust!", ingredients[i]);
+                    res.json ({display: "error"});
+                    db.close();
+                    return;
+                    // console.log("It's a bust!", ingredients[i]);
                 }
             }
             for (let j=0; j<ingredients.length; j++) {
@@ -77,16 +85,16 @@ app.post("/getIngredientsInfo", (req, res)=>{
             console.log("Post-processing of ingredients:", ingredients);
 
             getMatchingIngredients(ingredients, 1).then (result=> {
-                console.log("Db match:", result.rows);
-                // res.json ("safe to eat but only once"), then return
+                if (result.rows.length > 0) {
+                    console.log("Db match:", result.rows);
+                    res.json ({display: "unsafe", matches: result.rows});
+                } else {
+                    res.json({display: "safe"});
+                }
             }).catch(error => {
                 console.log(error);
             });
             
-            // TODO: res.json ("yeah whatever"), then return
-
-            res.json(result);
-            // console.log(result);
             db.close();
         });
   });
