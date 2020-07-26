@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const compression = require('compression');
 const { default: axios } = require('axios');
+const { getMatchingIngredients } = require('./sql/db');
 // bar code reader stuffs
 // const Quagga = require('quagga'); 
 
@@ -50,14 +51,38 @@ app.post("/getIngredientsInfo", (req, res)=>{
         var dbo = db.db("test");
         var query = { _id: productCode };
         var result = dbo.collection("products").find(query).toArray(function(err, result) {
-        if (err) {
-            console.log("Db Error: ", err); 
-            throw err;
-        }
-        res.json(result);
-        console.log(result);
-        db.close();
-    });
+            
+            console.log("yAY");
+            console.log(result);
+            if (err) {
+                console.log("Db Error: ", err); 
+                throw err;
+            }
+
+            // TODO: check for result.length, must be >0
+
+            let ingredients = result[0].ingredients_hierarchy;
+            for (let i=0; i<ingredients.length; i++) {
+                if (!ingredients[i].startsWith("en:")) {
+                    console.log("It's a bust!", ingredients[i]);
+                }
+            }
+            for (let j=0; j<ingredients.length; j++) {
+                ingredients[j]=ingredients[j].substring(3);
+                ingredients[j]= ingredients[j].replace("-", " ");
+            }
+
+            getMatchingIngredients(ingredients, 1).then (result=> {
+                console.log(result.data);
+            }).catch(error => {
+                console.log(error);
+            });
+            
+
+            res.json(result);
+            console.log(result);
+            db.close();
+        });
   });
 })
 
