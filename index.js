@@ -50,10 +50,11 @@ app.post("/getIngredientsInfo", (req, res)=>{
         if (err) throw err;
         var dbo = db.db("test");
         var query = { _id: productCode };
+        console.log("Before mongo lookup: code is", productCode);
         var result = dbo.collection("products").find(query).toArray(function(err, result) {
             
             console.log("yAY");
-            console.log(result);
+            // console.log(result);
             if (err) {
                 console.log("Db Error: ", err); 
                 throw err;
@@ -62,25 +63,30 @@ app.post("/getIngredientsInfo", (req, res)=>{
             // TODO: check for result.length, must be >0
 
             let ingredients = result[0].ingredients_tags;
+            console.log("Pre-processing of ingredients:", ingredients);
             for (let i=0; i<ingredients.length; i++) {
-                if (!ingredients[i].startsWith("en:")) {
+                if (!(ingredients[i].startsWith("en:") || ingredients[i].startsWith("de:")))  {
+                    // TODO: res.json ("don't know this shit"), then return
                     console.log("It's a bust!", ingredients[i]);
                 }
             }
             for (let j=0; j<ingredients.length; j++) {
                 ingredients[j]=ingredients[j].substring(3);
-                ingredients[j]= ingredients[j].replace("-", " ");
+                ingredients[j]= ingredients[j].replace(/\-/g, " ");  // replaces all "-" with " "
             }
+            console.log("Post-processing of ingredients:", ingredients);
 
             getMatchingIngredients(ingredients, 1).then (result=> {
-                console.log(result.rows);
+                console.log("Db match:", result.rows);
+                // res.json ("safe to eat but only once"), then return
             }).catch(error => {
                 console.log(error);
             });
             
+            // TODO: res.json ("yeah whatever"), then return
 
             res.json(result);
-            console.log(result);
+            // console.log(result);
             db.close();
         });
   });
