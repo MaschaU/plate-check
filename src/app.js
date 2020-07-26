@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Scanner from "./scanner";
 import ReactDOM from "react-dom";
 import axios from "axios";
+import Results from "./results";
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
             <div className="container">
                 {camera && <Scanner onDetected={onDetected} />}
             </div>
+            <Results/>
         </div>
     );
 }
