@@ -61,7 +61,7 @@ app.post("/getIngredientsInfo", (req, res)=>{
 
             // TODO: check for result.length, must be >0
 
-            let ingredients = result[0].ingredients_hierarchy;
+            let ingredients = result[0].ingredients_tags;
             for (let i=0; i<ingredients.length; i++) {
                 if (!ingredients[i].startsWith("en:")) {
                     console.log("It's a bust!", ingredients[i]);
@@ -73,7 +73,7 @@ app.post("/getIngredientsInfo", (req, res)=>{
             }
 
             getMatchingIngredients(ingredients, 1).then (result=> {
-                console.log(result.data);
+                console.log(result.rows);
             }).catch(error => {
                 console.log(error);
             });
