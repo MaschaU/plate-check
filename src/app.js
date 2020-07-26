@@ -12,21 +12,23 @@ export default function App() {
     const onDetected = result => {
         setResult(result);
         axios.post("/getIngredientsInfo", {codeToLookup:result}).then((result)=>{
-            console.log("This is the result:", result);
+            console.log("This is the result:", result.data);
+            setResult(result.data);
         });
     };
 
+
+    
     return (
         <div className="app">
             <h1>Plate Check</h1>
-            <p>{result ? result : "Scanning..."}</p>
             <button onClick={() => setCamera(!camera)}>
                 {camera ? "Stop" : "Start"}
             </button>
             <div className="container">
                 {camera && <Scanner onDetected={onDetected} />}
             </div>
-            <Results/>
+            <Results result={result}/>
         </div>
     );
 }
