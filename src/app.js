@@ -5,30 +5,48 @@ import axios from "axios";
 import Results from "./results";
 
 
-export default function App() {
-    const [camera, setCamera] = useState(false);
-    const [result, setResult] = useState(null);
+export default class App extends React.Component {
+    constructor (props)
+    {
+        super (props);
+        this.state = {
+            cameraShowing: false,
+            scanResult: {
+                display: "welcome",
+                barcode: "none"
+            }
+        };
 
-    const onDetected = result => {
-        setResult(result);
+        this.onBarcodeRead = this.onBarcodeRead.bind(this);
+    }
+    // const [camera, setCamera] = useState(false);
+    // const [result, setResult] = useState(null);
+
+    onBarcodeRead (result) {
         axios.post("/getIngredientsInfo", {codeToLookup:result}).then((result)=>{
             console.log("This is the result:", result.data);
-            setResult(result.data);
+            this.setState({scanResult: result.data});
         });
     };
 
 
-    
-    return (
-        <div className="app">
-            <h1>Plate Check</h1>
-            <button onClick={() => setCamera(!camera)}>
-                {camera ? "Stop" : "Start"}
-            </button>
-            <div className="container">
-                {camera && <Scanner onDetected={onDetected} />}
+    render() {
+        console.log("App.render()");
+        return (
+            <div className="app">
+                <div id="overlay"></div>
+                <div id="banner">
+                    <img src="https://i.imgur.com/5ygbHls.jpg" alt="food-image"/>
+                    <h1>Plate Check</h1>
+                </div>
+                <button onClick={() => this.setState({cameraShowing: !this.state.cameraShowing})}>
+                    {this.state.cameraShowing ? "Stop" : "Start"}
+                </button>
+                <div className="container">
+                    {this.state.cameraShowing && <Scanner onDetected={this.onBarcodeRead} />}
+                </div>
+                <Results result={this.state.scanResult} key={this.state.scanResult.barcode}/>
             </div>
-            <Results result={result}/>
-        </div>
-    );
+        );
+    }
 }

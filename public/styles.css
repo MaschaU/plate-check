@@ -1,0 +1,66 @@
+body {
+    background-color: #152028;
+
+    
+}
+
+img {
+    height: 300px;
+    width: 100%;
+    object-fit: cover;
+    opacity: 0.5;
+}
+
+#banner {
+    position: relative;
+    text-align: center;
+    
+}
+
+h1 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    font-family: 'Dancing Script', cursive;
+    font-size: 140px;
+    color: rgba(250,235,215,0.7);
+}
+
+.app {
+    text-align: center;
+    height: 99vh;
+    width: 99vw;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+.container {
+    position: relative;
+    border: 2px solid pink;
+  }
+  
+  .container,
+  #interactive.viewport {
+    width: 500px;
+    height: 375px;
+  }
+  
+  #interactive.viewport canvas,
+  video {
+    width: 500px;
+    height: 375px;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  #interactive.viewport canvas.drawingBuffer,
+  video.drawingBuffer {
+    width: 500px;
+    height: 375px;
+  }
+
+  
+

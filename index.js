@@ -55,10 +55,10 @@ app.post("/getIngredientsInfo", (req, res)=>{
         if (err) throw err;
         var dbo = db.db("test");
         var query = { _id: productCode };
-        // console.log("Before mongo lookup: code is", productCode);
+        console.log("Before mongo lookup: code is", productCode);
         var result = dbo.collection("products").find(query).toArray(function(err, result) {
             // console.log("yAY");
-            // console.log(result);
+            console.log(result);
             if (err) {
                 console.log("Db Error: ", err); 
                 throw err;
@@ -66,7 +66,7 @@ app.post("/getIngredientsInfo", (req, res)=>{
             // If we don't have this product code in the database,
             // we must abort trying to interpret it and return error
             if (result.length < 1) {
-                res.json ({display: "unknown"});
+                res.json ({display: "unknown", barcode: productCode});
                 db.close();
                 return;
             }
@@ -77,7 +77,7 @@ app.post("/getIngredientsInfo", (req, res)=>{
             // console.log("Pre-processing of ingredients:", ingredients);
             for (let i=0; i<ingredients.length; i++) {
                 if (!(ingredients[i].startsWith("en:") || ingredients[i].startsWith("de:")))  {
-                    res.json ({display: "error"});
+                    res.json ({display: "error", productName: productName, barcode: productCode});
                     db.close();
                     return;
                     // console.log("It's a bust!", ingredients[i]);
@@ -99,9 +99,9 @@ app.post("/getIngredientsInfo", (req, res)=>{
             getMatchingIngredients(ingredients, 1).then (result=> {
                 if (result.rows.length > 0) {
                     console.log("Db match:", result.rows);
-                    res.json ({display: "unsafe", productName: productName, matches: result.rows});
+                    res.json ({display: "unsafe", productName: productName, matches: result.rows, barcode: productCode});
                 } else {
-                    res.json({display: "safe", productName: productName});
+                    res.json({display: "safe", productName: productName, barcode: productCode});
                 }
             }).catch(error => {
                 console.log(error);
