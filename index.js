@@ -3,8 +3,6 @@ const app = express();
 const compression = require('compression');
 const { default: axios } = require('axios');
 const { getMatchingIngredients } = require('./sql/db');
-// bar code reader stuffs
-// const Quagga = require('quagga'); 
 
 // middleware
 app.use(express.urlencoded({extended: false}));
@@ -23,26 +21,33 @@ if (process.env.NODE_ENV != 'production') {
     app.use('/bundle.js', (req, res) => res.sendFile(`${__dirname}/bundle.js`));
 }
 
-// mongo stuff
+// MongoDB stuff
 const MongoClient = require('mongodb').MongoClient;
 const mongoUrl = "mongodb://localhost:27017/";
 
-/*  -- template test code
-MongoClient.connect(url, function(err, db) {
-  if (err) throw err;
-  var dbo = db.db("test");
-  var query = { _id: "3261830123377" };
-  var result = dbo.collection("products").find(query).toArray(function(err, result) {
-    if (err) {
-        console.log("Db Error: ", err); 
-        throw err;
-    }
-    console.log(result);
-    db.close();
-  });
-});*/
+// MongoDB template test code
+// MongoClient.connect(url, function(err, db) {
+//   if (err) throw err;
+//   var dbo = db.db("test");
+//   var query = { _id: "3261830123377" };
+//   var result = dbo.collection("products").find(query).toArray(function(err, result) {
+//     if (err) {
+//         console.log("Db Error: ", err); 
+//         throw err;
+//     }
+//     console.log(result);
+//     db.close();
+//   });
+// });
 
 // Route(s)
+
+// Route for the client to inquire about a product barcode. We start by looking up
+// the barcode number in the MongoDB with open food facts we obtained, and then
+// move on from there to check the ingredient list of the product against a list
+// of Very Bad Ingredients for people with this condition.
+//
+// This second list is located in another database, Postgres, that we maintain.
 
 app.post("/getIngredientsInfo", (req, res)=>{
     let productCode = req.body.codeToLookup;
@@ -50,16 +55,14 @@ app.post("/getIngredientsInfo", (req, res)=>{
         if (err) throw err;
         var dbo = db.db("test");
         var query = { _id: productCode };
-        console.log("Before mongo lookup: code is", productCode);
+        // console.log("Before mongo lookup: code is", productCode);
         var result = dbo.collection("products").find(query).toArray(function(err, result) {
-            
-            console.log("yAY");
+            // console.log("yAY");
             // console.log(result);
             if (err) {
                 console.log("Db Error: ", err); 
                 throw err;
             }
-
             // If we don't have this product code in the database,
             // we must abort trying to interpret it and return error
             if (result.length < 1) {
@@ -67,9 +70,11 @@ app.post("/getIngredientsInfo", (req, res)=>{
                 db.close();
                 return;
             }
-
+            // We have the list of ingredients. Make sure they're in a somewhat
+            // civilized language that we can understand
             let ingredients = result[0].ingredients_tags;
-            console.log("Pre-processing of ingredients:", ingredients);
+            let productName = result[0].product_name;
+            // console.log("Pre-processing of ingredients:", ingredients);
             for (let i=0; i<ingredients.length; i++) {
                 if (!(ingredients[i].startsWith("en:") || ingredients[i].startsWith("de:")))  {
                     res.json ({display: "error"});
@@ -78,18 +83,25 @@ app.post("/getIngredientsInfo", (req, res)=>{
                     // console.log("It's a bust!", ingredients[i]);
                 }
             }
+            // Standardize our list of ingredients to match the format of the
+            // database table
             for (let j=0; j<ingredients.length; j++) {
                 ingredients[j]=ingredients[j].substring(3);
                 ingredients[j]= ingredients[j].replace(/\-/g, " ");  // replaces all "-" with " "
             }
-            console.log("Post-processing of ingredients:", ingredients);
+            // console.log("Post-processing of ingredients:", ingredients);
+            // We're retrieving ALL rows in the database that match ANY of our ingredients.
+            // We're doing this via the "=ANY(array)" SQL function in the db.js file.
+            // If we get zero hits, there's nothing harmful in the ingredients list.
+            // One or more rows returned, and we must tell the client that this particular
+            // food item is unsafe for consumption for people with this condition.
 
             getMatchingIngredients(ingredients, 1).then (result=> {
                 if (result.rows.length > 0) {
                     console.log("Db match:", result.rows);
-                    res.json ({display: "unsafe", matches: result.rows});
+                    res.json ({display: "unsafe", productName: productName, matches: result.rows});
                 } else {
-                    res.json({display: "safe"});
+                    res.json({display: "safe", productName: productName});
                 }
             }).catch(error => {
                 console.log(error);
