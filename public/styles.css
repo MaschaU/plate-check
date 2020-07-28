@@ -32,8 +32,13 @@ h2 {
   font-family: 'Lato', sans-serif;
   font-size: 30px;
   color: #6996AD;
+  margin: 0;
+}
 
-
+strong {
+  text-shadow: -1px 0 #525C65, 0 1px #525C65, 1px 0 #525C65, 0 -1px #525C65;
+  margin: 0;
+  color: #A4D3EE;
 }
 
 .app {
