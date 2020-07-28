@@ -45,24 +45,22 @@ export default class Results extends React.Component {
         if (result.display=="unsafe") {
             return(
                 <div>
-                    <h2>{result.productName}</h2>
-                    <h2>Put this back on the shelf</h2>
+                    <h2>Put <strong>{result.productName}</strong> back on the shelf</h2>
                 </div>
             )
         }
         if (result.display=="safe") {
             return(
                 <div>
-                    <h2>{result.productName}</h2>
-                    <h2>Go ahead! It's perfectly safe to indulge in this product.</h2>
+                    <h2>Go ahead! It's perfectly safe to indulge in <strong>{result.productName}</strong>.</h2>
                 </div>
             )
         }
         if (result.display=="error" || result.display == "unknown") {
             return(
                 <div>
-                    <h2>{result.productName}</h2>
-                    <h2>Ooops. Seems like we don't have this product in our database.</h2>
+                    <h2><strong>{result.productName}</strong></h2>
+                    <h2>Ooops. Seems like we don't have enough data on this product.</h2>
                 </div>
             )
         }

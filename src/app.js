@@ -23,6 +23,10 @@ export default class App extends React.Component {
     // const [result, setResult] = useState(null);
 
     onBarcodeRead (result) {
+        if (result == "none") {
+            return;
+        }
+
         axios.post("/getIngredientsInfo", {codeToLookup:result}).then((result)=>{
             console.log("This is the result:", result.data);
             this.setState({scanResult: result.data});
@@ -39,7 +43,13 @@ export default class App extends React.Component {
                     <img src="https://i.imgur.com/5ygbHls.jpg" alt="food-image"/>
                     <h1>Plate Check</h1>
                 </div>
-                <button onClick={() => this.setState({cameraShowing: !this.state.cameraShowing})}>
+                <button className="glow-on-hover" onClick={() => {
+                    let newCameraState = !this.state.cameraShowing;
+                    this.setState({cameraShowing: newCameraState});
+                    if (!newCameraState) {
+                        this.setState({scanResult: { barcode: "none", display: "welcome"}}); // restore to initial state
+                    }
+                    }}>
                     {this.state.cameraShowing ? "Stop" : "Start"}
                 </button>
                 <div className="container">

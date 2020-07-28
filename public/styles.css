@@ -22,9 +22,18 @@ h1 {
     top: 0;
     left: 0;
     right: 0;
-    font-family: 'Dancing Script', cursive;
+    font-family: 'Lato', sans-serif;
     font-size: 140px;
     color: rgba(250,235,215,0.7);
+    text-shadow: -1px 0 #1A1D24, 0 1px #1A1D24, 1px 0 #1A1D24, 0 -1px #1A1D24;
+}
+
+h2 {
+  font-family: 'Lato', sans-serif;
+  font-size: 30px;
+  color: #6996AD;
+
+
 }
 
 .app {
@@ -38,7 +47,9 @@ h1 {
 
 .container {
     position: relative;
-    border: 2px solid pink;
+    border: 2px solid #6996AD;
+    margin: auto;
+    margin-top: 35px;
   }
   
   .container,
@@ -62,5 +73,80 @@ h1 {
     height: 375px;
   }
 
-  
+  button {
+    height: 38px;
+    width: 120px;
+    border-radius: 10px;
+    margin-left: 10px;
+    border: 2px solid #6996AD;
+    background-color: #1A1D24;
+    color: #6996AD;
+    font-size: 20px;
+    font-family: 'Lato', sans-serif;;
+    transition: all 0.5s;
+    cursor: pointer;
+}
 
+.glow-on-hover {
+  width: 120px;
+  height: 38px;
+  border: 2px solid #8EE5EE;
+  outline: none;
+  color: #6996AD;
+  background: #1A1D24;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  font-size: 20px;
+  font-family: 'Lato', sans-serif;
+  margin: 10px;
+  margin-top: 20px;
+}
+
+.glow-on-hover:before {
+  content: '';
+  background: linear-gradient(45deg, #8EE5EE, #05B8CC, #B0E0E6, #39B7CD, #0EBFE9, #63D1F4, #0099CC, #00B2EE, #0BB5FF);
+  position: absolute;
+  top: -2px;
+  left:-2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+  border-radius: 10px;
+}
+
+.glow-on-hover:active {
+  color: #1A1D24
+}
+
+.glow-on-hover:active:after {
+  background: transparent;
+}
+
+.glow-on-hover:hover:before {
+  opacity: 1;
+}
+
+.glow-on-hover:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing {
+  0% { background-position: 0 0; }
+  50% { background-position: 400% 0; }
+  100% { background-position: 0 0; }
+}
