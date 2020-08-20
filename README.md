@@ -9,10 +9,10 @@ against a list of unique product ID's contained in a MongoDB. Once there is a hi
 <li>the product should be avoided</li>
 <li>not enough info on the product</li>
 </ul>
-<br></br>
+
 <strong>Tech stack</strong>
 <p>React, QuaggaJS, Mongodb, Postgresql, Canvas, CSS, Nodejs with Express</p>
-<br></br>
+
 <strong>Credits</strong>
 <p>This app was developed with <a href="https://world.openfoodfacts.org/data">Open Food Facts</a> database, available under <a href="https://opendatacommons.org/licenses/odbl/1-0/">Open Data Licence</a>.</p>
 
