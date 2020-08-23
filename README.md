@@ -11,7 +11,7 @@ against a list of unique product ID's contained in a MongoDB. Once there is a hi
 </ul>
 
 <strong>Tech stack</strong>
-<p>React, QuaggaJS, Mongodb, Postgresql, Canvas, CSS, Nodejs with Express</p>
+<p>React, QuaggaJS, Mongodb, Postgresql, Canvas, CSS, Nodejs with Express, npm</p>
 
 <strong>Credits</strong>
 <p>This app was developed with <a href="https://world.openfoodfacts.org/data">Open Food Facts</a> database, available under <a href="https://opendatacommons.org/licenses/odbl/1-0/">Open Data Licence</a>.</p>
